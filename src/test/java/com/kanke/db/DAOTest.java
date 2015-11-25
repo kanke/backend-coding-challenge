@@ -21,6 +21,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.*;
 
 /**
@@ -37,34 +38,40 @@ public class DAOTest {
     private SessionFactory factory;
 
     @Mock
-    Session session;
+    private Session session;
 
     @Mock
-    Transaction transaction;
+    private Transaction transaction;
 
     @Mock
-    Expense expense;
+    private Expense expense;
 
     @Mock
-    Serializable serializable;
+    private Serializable serializable;
 
     @Spy
     @InjectMocks
     private DAO dao;
 
-    int expensesId = 1;
+    @Mock
+    private Query query;
 
     @Mock
-    Query query;
+    private List<Expense> list;
+
+    private Calendar date;
 
     @Mock
-    List<Expense> list;
-
-    Calendar date;
+    private Expense newExp;
 
 
     @After
     public void validate() {
+        Expense expense1 = (Expense) session.load(Expense.class, expense.getExpenseId());
+        session.delete(expense1);
+        transaction.commit();
+        session.close();
+        dao.cancelExpense(expense.getExpenseId());
         validateMockitoUsage();
     }
 
@@ -100,8 +107,8 @@ public class DAOTest {
         session.delete(expense1);
         transaction.commit();
         session.close();
-        dao.cancelExpense(expensesId);
-        verify(dao, atLeastOnce()).cancelExpense(expensesId);
+        dao.cancelExpense(expense.getExpenseId());
+        verify(dao, atLeastOnce()).cancelExpense(expense.getExpenseId());
 
     }
 
@@ -114,6 +121,21 @@ public class DAOTest {
 
         assertEquals(list, dao.getExpenses());
         verify(dao, atLeastOnce()).getExpenses();
+
+    }
+
+
+    @Test
+    public void shouldGetExpense() {
+
+        String hql = "from Expense where expensesId = :expensesId";
+        when(session.createQuery(hql)).thenReturn(query);
+        query.setParameter("expensesId", expense.getExpenseId());
+        when(query.list()).thenReturn(list);
+        when(list.get(0)).thenReturn(newExp);
+
+        assertEquals(newExp, dao.getExpense(expense.getExpenseId()));
+        verify(dao, atLeastOnce()).getExpense(expense.getExpenseId());
 
     }
 }

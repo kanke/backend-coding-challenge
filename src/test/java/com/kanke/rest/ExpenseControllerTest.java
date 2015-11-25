@@ -4,9 +4,7 @@ import com.kanke.api.Expense;
 import com.kanke.api.ExpenseHandler;
 import com.kanke.db.DAO;
 import com.kanke.service.ExpenseHandlerImpl;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +32,7 @@ public class ExpenseControllerTest {
 
     @Spy
     @InjectMocks
-    ExpenseController expenseController;
+    private ExpenseController expenseController;
 
     @Mock
     private ExpenseHandler expenseHandler;
@@ -43,32 +41,44 @@ public class ExpenseControllerTest {
     private SessionFactory factory;
 
     @Mock
-    Session session;
+    private Session session;
 
     @Mock
-    Transaction transaction;
+    private Transaction transaction;
 
     @Mock
-    Serializable serializable;
+    private Serializable serializable;
 
     @Spy
     @InjectMocks
     private DAO dao;
 
     @Mock
-    List<Expense> exp;
+    private List<Expense> exp;
 
     @Mock
-    Response response;
+    private Response response;
+
+    private Expense expense;
 
     @Mock
-    Expense expense;
+    private Response.ResponseBuilder responseBuilder;
 
     @Mock
-    Response.ResponseBuilder responseBuilder;
+    private Calendar date;
+
+    private int expensesId = 90;
+
+    @Spy
+    @InjectMocks
+    private DAO daoObject;
 
     @Mock
-    Calendar date;
+    private Query query;
+
+    @Mock
+    private List<Expense> list;
+
 
     @After
     public void validate() {
@@ -80,11 +90,13 @@ public class ExpenseControllerTest {
 
         when(factory.openSession()).thenReturn(session);
         when(session.beginTransaction()).thenReturn(transaction);
-
+        expense = new Expense();
         expense.setDate(date);
         expense.setAmount(10.00);
-        expense.setExpenseId(1);
+        expense.setExpenseId(expensesId);
         expense.setReason("test");
+
+        exp.add(expense);
 
     }
 
@@ -123,7 +135,10 @@ public class ExpenseControllerTest {
     @Test
     public void shouldRespondWithSaveExpense() {
 
-        when(expenseHandler.addExpense(expense)).thenReturn(expense);
+        when(session.save(expense)).thenReturn(serializable);
+        when(session.getTransaction()).thenReturn(transaction);
+        transaction.commit();
+
         when(response.getStatus()).thenReturn(201);
         when(responseBuilder.build()).thenReturn(response);
 
@@ -142,32 +157,88 @@ public class ExpenseControllerTest {
         when(session.getTransaction()).thenReturn(transaction);
         transaction.commit();
 
-        ExpenseHandlerImpl expenseHandler = mock(ExpenseHandlerImpl.class);
-
-        when(expenseHandler.addExpense(expense)).thenReturn(null);
         when(response.getStatus()).thenReturn(404);
         when(responseBuilder.build()).thenReturn(response);
 
-        expenseController.saveExpense(null);
+        doThrow(MappingException.class).when(expenseController).saveExpense(expense);
 
         assertEquals(404, response.getStatus());
-        verify(expenseController, atLeastOnce()).saveExpense(expense);
+        verify(expenseController, never()).saveExpense(expense);
     }
 
 
     @Test
     public void shouldRespondWithDeletedExpense() {
 
-        ExpenseHandlerImpl expenseHandler = mock(ExpenseHandlerImpl.class);
+        Expense expense1 = (Expense) session.load(Expense.class, expensesId);
+        session.delete(expense1);
+        transaction.commit();
+        session.close();
 
-        expenseHandler.deleteExpense(expense.getExpenseId());
+        daoObject.cancelExpense(expensesId);
         when(response.getStatus()).thenReturn(200);
         when(responseBuilder.build()).thenReturn(response);
 
-        expenseController.cancelExpense(expense.getExpenseId());
+        expenseController.cancelExpense(expensesId);
 
         assertEquals(200, response.getStatus());
-        verify(expenseController, atLeastOnce()).cancelExpense(expense.getExpenseId());
+        verify(expenseController, atLeastOnce()).cancelExpense(expensesId);
+    }
+
+    @Test
+    public void shouldNotRespondWithDeletedExpense() {
+
+        Expense expense1 = (Expense) session.load(Expense.class, expensesId);
+        session.delete(expense1);
+        transaction.commit();
+        session.close();
+
+        daoObject.cancelExpense(expensesId);
+        when(response.getStatus()).thenReturn(404);
+        when(responseBuilder.build()).thenReturn(response);
+
+        doThrow(MappingException.class).when(expenseController).cancelExpense(expensesId);
+
+        assertEquals(404, response.getStatus());
+        verify(expenseController, never()).cancelExpense(expensesId);
+    }
+
+    @Test
+    public void shouldRespondWithGetExpense() {
+        list.add(expense);
+        String hql = "from Expense where expensesId = :expensesId";
+        when(session.createQuery(hql)).thenReturn(query);
+        query.setParameter("expensesId", expensesId);
+        when(query.list()).thenReturn(list);
+        when(list.get(0)).thenReturn(expense);
+
+        when(response.getStatus()).thenReturn(200);
+        when(responseBuilder.build()).thenReturn(response);
+
+        daoObject.getExpense(expensesId);
+        expenseController.getExpense(1);
+
+        assertEquals(200, response.getStatus());
+        verify(expenseController, atLeastOnce()).getExpense(1);
+    }
+
+    @Test
+    public void shouldNotRespondWithGetExpense() {
+        list.add(expense);
+        String hql = "from Expense where expensesId = :expensesId";
+        when(session.createQuery(hql)).thenReturn(query);
+        query.setParameter("expensesId", expensesId);
+        when(query.list()).thenReturn(list);
+        when(list.get(0)).thenReturn(expense);
+
+        when(response.getStatus()).thenReturn(404);
+        when(responseBuilder.build()).thenReturn(response);
+
+        daoObject.getExpense(expensesId);
+        doThrow(MappingException.class).when(expenseController).getExpense(1);
+
+        assertEquals(404, response.getStatus());
+        verify(expenseController, never()).getExpense(1);
     }
 
 

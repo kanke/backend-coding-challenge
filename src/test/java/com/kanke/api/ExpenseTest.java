@@ -19,15 +19,15 @@ import static org.mockito.Mockito.validateMockitoUsage;
 @RunWith(MockitoJUnitRunner.class)
 public class ExpenseTest {
 
-    protected int expensesId = 1;
+    private int expensesId = 1;
 
-    protected String reason = "reason";
+    private String reason = "reason";
 
-    protected double amount = 10.00;
+    private double amount = 10.00;
 
-    protected double vatAmount = 10.00;
+    private double vatAmount = 0.00;
 
-    protected Calendar date = new GregorianCalendar(2013, 8, 31);
+    private Calendar date = new GregorianCalendar(2013, 8, 31);
 
 
     @After
@@ -88,13 +88,13 @@ public class ExpenseTest {
         assertNotSame(this.expensesId, expense.getExpenseId());
     }
 
-//    @Test
-//    public void shouldReturnVATAmount() {
-//        Expense expense = new Expense();
-//        expense.setVatAmount(10.00);
-//        assertTrue(expense.getVatAmount() == vatAmount);
-//        assertEquals(this.vatAmount, expense.getAmount());
-//    }
+    @Test
+    public void shouldReturnVATAmount() {
+        Expense expense = new Expense();
+        expense.setVatAmount(0.00);
+        assertTrue(expense.getVatAmount() == vatAmount);
+        assertEquals(this.vatAmount, expense.getAmount());
+    }
 
     @Test
     public void shouldNotReturnVATAmount() {

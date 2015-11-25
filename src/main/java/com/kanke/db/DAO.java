@@ -12,7 +12,7 @@ import org.hibernate.service.ServiceRegistryBuilder;
 import java.util.List;
 
 /**
- * Created by kishaku on 21/11/2015.
+ * Created by kishaku on 24/11/2015.
  */
 public class DAO {
 
@@ -33,6 +33,17 @@ public class DAO {
             instance = new DAO();
         }
         return instance;
+    }
+
+    public Expense getExpense(int expensesId) {
+        Session session = factory.openSession();
+        String hql = "from Expense where expensesId = :expensesId";
+        Query query = session.createQuery(hql);
+        query.setParameter("expensesId", expensesId);
+        List<Expense> list = query.list();
+        System.out.println("list" +list);
+        System.out.println("list.get(0)" + list.get(0));
+        return list.get(0);
     }
 
     public List<Expense> getExpenses() {

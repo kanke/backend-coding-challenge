@@ -9,10 +9,24 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
- * Created by kishaku on 21/11/2015.
+ * Created by kishaku on 24/11/2015.
  */
 @Path("/")
 public class ExpenseController {
+
+    @GET
+    @Path("/{expensesId}")
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public Response getExpense(
+            @PathParam(value = "expensesId") int expensesId) {
+        Expense exp = new ExpenseHandlerImpl().getExpense(expensesId);
+        if (exp != null) {
+            return Response.ok().entity(exp).build();
+        } else {
+            return Response.status(404).build();
+        }
+    }
+
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})

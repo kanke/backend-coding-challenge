@@ -8,7 +8,10 @@
 
 package com.kanke.api;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.*;
 import javax.xml.datatype.XMLGregorianCalendar;
 import java.util.Calendar;
@@ -49,7 +52,6 @@ import java.util.Calendar;
 public class Expense {
     @Id
     @Column(name = "expensesId")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected int expensesId;
 
     @XmlElement(required = true)

@@ -19,7 +19,7 @@ public class ObjectFactoryTest {
 
     @Spy
     @InjectMocks
-    ObjectFactory objectFactory;
+    private ObjectFactory objectFactory;
 
     @After
     public void validate() {
