@@ -1,0 +1,11 @@
+
+# Ignore compilation results
+target/
+
+# Ignore artifacts
+.idea
+*.iml
+**/*.iml
+
+## Directory-based project format:
+.idea/
