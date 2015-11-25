@@ -53,37 +53,32 @@ To create database and table in database(MYSQL). This creates database and table
 
 **To run this project successfully, please add the following to your Tomcat and Maven configurations.**
 
-<code>
+
 1.1 Tomcat Authentication
 Add an user with roles manager-gui and manager-script.
 
 %TOMCAT7_PATH%/conf/tomcat-users.xml
-<?xml version='1.0' encoding='utf-8'?>
-<tomcat-users>
 
-	<role rolename="manager-gui"/>
-	<role rolename="manager-script"/>
-	<user username="admin" password="password" roles="manager-gui,manager-script" />
-
-</tomcat-users>
+	<tomcat-users>
+        <role rolename="manager-gui"/>
+        <role rolename="manager-script"/>
+        <user username="admin" password="password" roles="manager-gui,manager-script" />
+    </tomcat-users>
 
 1.2 Maven Authentication
 Add above Tomcat’s user in the Maven setting file, later Maven will use this user to login Tomcat server.
 
 %MAVEN_PATH%/conf/settings.xml
-<?xml version="1.0" encoding="UTF-8"?>
-<settings ...>
-	<servers>
 
-		<server>
-			<id>TomcatServer</id>
-			<username>admin</username>
-			<password>password</password>
-		</server>
-
-	</servers>
-</settings>
-</code>
+    <settings>
+        <servers>
+            <server>
+                <id>TomcatServer</id>
+                <username>admin</username>
+                <password>password</password>
+            </server>
+        </servers>
+    </settings>
 
 To view Application
 ==================
