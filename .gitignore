@@ -1,14 +1,11 @@
 node_modules
 build
 
-
 # Ignore compilation results
 target/
 
-# Ignore artifacts
+## Directory-based project format:
+.idea/
 .idea
 *.iml
 **/*.iml
-
-## Directory-based project format:
-.idea/

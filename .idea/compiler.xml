@@ -19,14 +19,18 @@
       </profile>
       <profile default="false" name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <sourceTestOutputDir name="target\generated-test-sources\test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="true" />
+        <module name="backend-coding-challenge" />
         <module name="Challenge" />
+        <module name="challenge" />
         <module name="ui.apps" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="backend-coding-challenge" target="1.5" />
+      <module name="challenge" target="1.5" />
       <module name="Challenge" target="1.5" />
       <module name="ui.apps" target="1.5" />
     </bytecodeTargetLevel>
