@@ -30,7 +30,6 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ExpenseHandlerImplTest {
 
-
     @Spy
     @InjectMocks
     private ExpenseHandlerImpl expenseHandlerImpl;
@@ -44,7 +43,7 @@ public class ExpenseHandlerImplTest {
     @Mock
     private Session session;
 
-    private int expensesId = 90;
+    private int expensesId = 1000;
 
     @Mock
     private Transaction transaction;
@@ -71,6 +70,11 @@ public class ExpenseHandlerImplTest {
 
     @After
     public void validate() {
+        Expense expense1 = (Expense) session.load(Expense.class, expensesId);
+        session.delete(expense1);
+        transaction.commit();
+        session.close();
+        daoObject.cancelExpense(expensesId);
 
         validateMockitoUsage();
     }

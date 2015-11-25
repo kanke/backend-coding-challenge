@@ -67,7 +67,7 @@ public class ExpenseControllerTest {
     @Mock
     private Calendar date;
 
-    private int expensesId = 90;
+    private int expensesId = 2000;
 
     @Spy
     @InjectMocks
@@ -82,6 +82,12 @@ public class ExpenseControllerTest {
 
     @After
     public void validate() {
+        Expense expense1 = (Expense) session.load(Expense.class, expensesId);
+        session.delete(expense1);
+        transaction.commit();
+        session.close();
+
+        daoObject.cancelExpense(expensesId);
         validateMockitoUsage();
     }
 
@@ -175,7 +181,6 @@ public class ExpenseControllerTest {
         transaction.commit();
         session.close();
 
-        daoObject.cancelExpense(expensesId);
         when(response.getStatus()).thenReturn(200);
         when(responseBuilder.build()).thenReturn(response);
 

@@ -41,8 +41,6 @@ public class DAO {
         Query query = session.createQuery(hql);
         query.setParameter("expensesId", expensesId);
         List<Expense> list = query.list();
-        System.out.println("list" +list);
-        System.out.println("list.get(0)" + list.get(0));
         return list.get(0);
     }
 
