@@ -17,7 +17,7 @@ Calculates the VAT client-side as the user enters a new expense, before they sav
 ##### What frameworks, tools and tech stack did I use?
 * Intelli J IDE
 * Maven 3.3.3 as build tool
-* XSD to generate domain files
+* XSD to generate domain files (JAXB)
 * Hibernate as ORM
 * MYSQL as RDBMS
 * JDk1.8
